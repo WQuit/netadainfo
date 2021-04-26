@@ -1,10 +1,10 @@
 /*** 
  * @Author: wq
  * @Date: 2021-04-25 20:28:56
- * @LastEditTime: 2021-04-26 00:03:11
+ * @LastEditTime: 2021-04-26 21:18:22
  * @LastEditors: wq
  * @Description: get netinfo for using cmd <ip -4 -f inet -j address> 
- * @FilePath: /code/ip/netinfo.h
+ * @FilePath: /code/netadainfo/src/netinfo.h
  * @CSDN： https://blog.csdn.net/u011218356 
  * @Git:  https://github.com/WQuit 
  * @Email:  779508400@qq.com  
@@ -35,7 +35,7 @@ inline void get_value(const nlohmann::json& j, const char* key, T& val)
     }
 }
 
-typedef struct addrInfo
+struct addrInfo
 {
     std::string family;
     std::string local;
@@ -47,7 +47,7 @@ typedef struct addrInfo
     int preferredLifeTime;
 };
 
-typedef struct address
+struct address
 {
     int ifIndex;
     std::string ifName;

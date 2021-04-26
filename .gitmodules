@@ -1,0 +1,4 @@
+[submodule "subprojects/iproute2"]
+	path = subprojects/iproute2
+	url = https://github.com/shemminger/iproute2.git
+	branch = main
