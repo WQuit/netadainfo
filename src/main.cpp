@@ -1,7 +1,7 @@
 /*** 
  * @Author: wq
  * @Date: 2021-04-25 20:27:55
- * @LastEditTime: 2021-04-26 23:52:35
+ * @LastEditTime: 2021-04-27 21:37:29
  * @LastEditors: wq
  * @Description: 
  * @FilePath: /code/netadainfo/src/main.cpp
@@ -34,15 +34,12 @@ std::vector<outputInfo> netInfo::getOnlineNetInfo()
     for(auto it : _info.adds)
     {
         outputInfo output;
-        if(it.flags.empty())
-            continue;
-        bool online = false;
-        for(auto status : it.flags)
+        if(it.linkType == std::string("ether") || it.linkType == std::string("ieee802.11"))
         {
-            if(status == std::string())
-            {
-                
-            }
+
+        }else if(it.linkType == std::string("loopback"))
+        {
+            continue;
         }
         output.ifName = it.ifName;
         output.macAddress = it.address;
@@ -62,12 +59,66 @@ std::vector<outputInfo> netInfo::getOnlineNetInfo()
 
 std::vector<outputInfo> netInfo::getEthNetInfo()
 {
-    
+    std::vector<outputInfo> outputs;
+    for(auto it : _info.adds)
+    {
+        outputInfo output;
+        if(it.linkType != std::string("ether"))
+            continue;
+        if(it.flags.empty())
+            continue;
+        bool isLower = false;
+        bool isUp = false;
+        for(auto status : it.flags)
+        {
+            if(status == std::string("LOWER_UP"))
+            {
+                isLower = true;
+            }else if(status == std::string("UP"))
+            {
+                isUp = true;
+            }
+        }
+        if((!isLower && !isUp))
+            break;
+        output.ifName = it.ifName;
+        output.macAddress = it.address;
+        for(auto item : it.addrInfos)
+        {
+            if(item.family == std::string("inet"))
+            {
+                output.ipAddress = item.local;
+                break;
+            }
+        }
+        std::cout << output.ifName << " : " << output.ipAddress << " : " << output.macAddress << std::endl;
+        outputs.push_back(output);
+    }
+    return outputs;    
 }
 
 std::vector<outputInfo> netInfo::getWifiInfo()
 {
-    
+    std::vector<outputInfo> outputs;
+    for(auto it : _info.adds)
+    {
+        outputInfo output;
+        if(it.linkType != std::string("ieee802.11"))
+            continue;
+        output.ifName = it.ifName;
+        output.macAddress = it.address;
+        for(auto item : it.addrInfos)
+        {
+            if(item.family == std::string("inet"))
+            {
+                output.ipAddress = item.local;
+                break;
+            }
+        }
+        std::cout << output.ifName << " : " << output.ipAddress << " : " << output.macAddress << std::endl;
+        outputs.push_back(output);
+    }
+    return outputs;    
 }
 
 int main(int args, char **arg)
@@ -87,6 +138,12 @@ int main(int args, char **arg)
     pclose(fp);
     netInfo net;
     net.getNetInfo(jStr);
+    std::cout << "-----------------------" << std::endl;
     net.getOnlineNetInfo();
+    std::cout << "-----------------------" << std::endl;
+    net.getEthNetInfo();
+    std::cout << "-----------------------" << std::endl;
+    net.getWifiInfo();
+    std::cout << "-----------------------" << std::endl;
     return 0;
 }
