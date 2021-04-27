@@ -17,7 +17,6 @@
 #include <nlohmann/json.hpp>
 #include <cstring>
 #include <vector>
-#include <iproute2/bpf_elf.h>
 
 #define KSUCCESS (0)
 #define KFAIL  (-1)
@@ -88,10 +87,12 @@ struct netadaInfo{
                     get_value(*jItem, "family", addrItem.family);
                     get_value(*jItem, "local", addrItem.local);
                     get_value(*jItem, "prefixlen", addrItem.prefixlen);
-                    if(addrItem.family == std::string("inet"))
+                    if(addrItem.family == std::string("inet") && addrItem.local != std::string("127.0.0.1"))
+                    {
                         get_value(*jItem, "broadcast", addrItem.broadcast);
+                        //get_value(*jItem, "dynamic", addrItem.dynamic);
+                    }
                     get_value(*jItem, "scope", addrItem.scope);
-                    get_value(*jItem, "dynamic", addrItem.dynamic);
                     get_value(*jItem, "valid_life_time", addrItem.validLifeTime);
                     get_value(*jItem, "preferred_life_time", addrItem.preferredLifeTime);
                     addressItem.addrInfos.push_back(addrItem);

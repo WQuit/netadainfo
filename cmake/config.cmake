@@ -1,0 +1,1 @@
+hunter_config(nlohmann_json VERSION 3.7.0)

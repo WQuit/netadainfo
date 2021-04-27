@@ -1,5 +1,13 @@
 #Project name: network adapter info
 cmake_minimum_required(VERSION 3.5)
+
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/cpp-pm/hunter/archive/v0.23.241.tar.gz"
+    SHA1 "0897935585580d4eece64804f4f48fe9199a7a2c"
+    FILEPATH "${CMAKE_CURRENT_LIST_DIR}/cmake/config.cmake"
+)
+
 project(netadainfo)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -51,12 +59,15 @@ configure_file(
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O2")
 
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json CONFIG REQUIRED)
+
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/src PROJECT_SOURCES)
 
-#add_library(netadainfo ${PROJECT_SOURCES})
+set(PROJECT_LIBS nlohmann_json::nlohmann_json)
 
 add_executable(netadainfo ${PROJECT_SOURCES})
 
-target_link_libraries(netadainfo)
+target_link_libraries(netadainfo ${PROJECT_LIBS})
